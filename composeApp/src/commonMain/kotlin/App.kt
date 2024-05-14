@@ -8,18 +8,25 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
 import pokedexkmp.composeapp.generated.resources.Res
 import pokedexkmp.composeapp.generated.resources.compose_multiplatform
 
-@OptIn(ExperimentalResourceApi::class)
+
 @Composable
-@Preview
 fun App() {
     MaterialTheme {
+        Navigator(screen = MainScreen())
+    }
+}
+
+class MainScreen: Screen {
+    @OptIn(ExperimentalResourceApi::class)
+    @Composable
+    override fun Content() {
         var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = { showContent = !showContent }) {
