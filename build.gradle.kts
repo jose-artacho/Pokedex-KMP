@@ -3,22 +3,6 @@ plugins {
     // in each subproject's classloader
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        google()
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    }
 }
