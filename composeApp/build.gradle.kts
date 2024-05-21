@@ -1,31 +1,14 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "composeApp"
-        browser {
-            commonWebpackConfig {
-                outputFileName = "composeApp.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.projectDir.path)
-                    }
-                }
-            }
-        }
-        binaries.executable()
-    }
-    
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -33,7 +16,7 @@ kotlin {
             }
         }
     }
-    
+
     jvm("desktop")
     
     listOf(
@@ -49,20 +32,54 @@ kotlin {
     
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
+            api(libs.androidx.activity.compose)
+            api(libs.androidx.appcompat)
+            api(libs.androidx.core)
+            implementation(libs.ktor.okhttp)
+            api(libs.coil3.gif)
+            api(libs.coil3.svg)
+            api(libs.coil3.core)
+            api(libs.coil3.video)
+            implementation(libs.system.ui.controller)
+            implementation(libs.accompanist.permissions)
+            implementation(libs.androidx.room.paging)
         }
         commonMain.dependencies {
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.transitions)
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
+            implementation(compose.animation)
+            implementation(compose.material3)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            api(compose.materialIconsExtended)
+            implementation(libs.ktor.core)
+            implementation(libs.ktor.logging)
+            implementation(libs.ktor.serialization)
+            implementation(libs.ktor.negotiation)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.compose.navigation)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            // Room
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
+
+
+            api(libs.koin.core)
+            api(libs.koin.compose)
+            api(libs.coil3)
+            api(libs.coil3.network)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.darwin.ios)
+            implementation(libs.ktor.ios)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -79,11 +96,7 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        applicationId = "com.arttachdevs.pokedexkmp"
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
     }
     packaging {
         resources {
@@ -116,6 +129,19 @@ compose.desktop {
     }
 }
 
-compose.experimental {
-    web.application {}
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation(libs.androidx.ui.tooling.preview.android)
+    // Room
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
