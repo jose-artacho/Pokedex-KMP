@@ -4,13 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PokemonResponse(
+    val count: Int,
+    val next: String?,
+    val previous: String?,
+    val results: List<PokemonResultResponse>
+)
 
-    val id: Int,
+@Serializable
+data class PokemonResultResponse(
     val name: String,
-    val description: String,
-    val weight: Int,
-    val height: Int,
-    val experience: Int,
-    val url: String,
-    val types: String,
+    val url: String
 )

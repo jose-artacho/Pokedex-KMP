@@ -13,7 +13,7 @@ class PokemonDataSource(
     suspend fun  getPokemons() = withContext(dispatcher.ioDispatcher) {
         api.getPokemons()
     }
-    suspend fun  getPokemon(id: Int) = withContext(dispatcher.ioDispatcher) {
-        api.getPokemon(id)
+    suspend fun  getPokemonById(id: Int) = withContext(dispatcher.ioDispatcher) {
+        api.getPokemonById(id)
     }
 }

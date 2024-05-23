@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -42,6 +43,9 @@ kotlin {
             api(libs.coil3.svg)
             api(libs.coil3.core)
             api(libs.coil3.video)
+            api(libs.koin.android)
+            api(libs.koin.core)
+            api(libs.koin.compose)
             implementation(libs.system.ui.controller)
             implementation(libs.accompanist.permissions)
             implementation(libs.androidx.room.paging)
@@ -70,7 +74,6 @@ kotlin {
             implementation(libs.androidx.paging.common)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
-
 
             api(libs.koin.core)
             api(libs.koin.compose)
