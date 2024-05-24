@@ -24,7 +24,7 @@ androidx-core = "1.13.1"
 androidx-datastore = "1.1.1"
 koin = "3.4.3"
 koin-compose = "1.0.4"
-coil3-io = "3.0.0-alpha01"
+coil3-io = "3.0.0-alpha06"
 coroutines-test-ver = "1.7.3"
 mockk = "1.13.10"
 accompanist-version = "0.33.2-alpha"
@@ -63,7 +63,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-
+ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json-ver" }
 kotlinx-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "kotlinx-components-resources-ver" }
@@ -106,10 +106,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 
 
 coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3-io" }
-coil3-network = { module = "io.coil-kt.coil3:coil-network", version.ref = "coil3-io" }
-coil3-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil3-io" }
-coil3-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil3-io" }
-coil3-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3-io" }
+coil3-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3-io" }
 coil3-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil3-io" }
 
 #Room

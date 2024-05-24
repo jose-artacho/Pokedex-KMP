@@ -7,6 +7,7 @@ import domain.model.PokemonDetail
 
 fun PokemonResultResponse.asExternalModel() = Pokemon(
     name = name,
+    image = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png",
     url = url
 )
 fun PokemonDetailResponse.asExternalModel() = PokemonDetail(
