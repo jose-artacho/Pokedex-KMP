@@ -9,8 +9,12 @@ fun PokemonResultResponse.asExternalModel() = Pokemon(
     name = name,
     url = url
 )
+
 fun PokemonDetailResponse.asExternalModel() = PokemonDetail(
     id = id,
     name = name,
-    description = flavorTextEntries.first { it.language.name == "en" }.description,
+    description = flavorTextEntries.first { it.language.name == "en" }.description.replace(
+        "\n",
+        " "
+    )
 )
