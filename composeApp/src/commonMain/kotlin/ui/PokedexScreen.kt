@@ -113,7 +113,7 @@ fun ScreenSection(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = 24.dp),
         color = Color.LightGray,
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -149,11 +149,23 @@ fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
                         ) {
                             val state = painter.state
                             if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                                Column(
+                                    Modifier.fillMaxSize(),
+                                    horizontalAlignment = CenterHorizontally
+                                ) {
+                                    Spacer(modifier = Modifier.weight(1f))
+
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp)
+                                    )
+
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             } else {
                                 SubcomposeAsyncImageContent(
                                     modifier = Modifier.fillMaxSize().size(180.dp),
-                                    alignment = Center)
+                                    alignment = Center
+                                )
                             }
                         }
                     }
@@ -166,7 +178,7 @@ fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
                                 text = pokemonDetail?.description ?: "",
                                 color = Color.White,
                                 textAlign = TextAlign.Start,
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.titleLarge,
                             )
                         }
                     }
@@ -209,6 +221,8 @@ fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
 @Composable
 fun BottomSection(pokemons: List<Pokemon>, onClick: (Int) -> Unit) {
 
+    var selectedPokemon by remember { mutableStateOf(1) }
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -218,12 +232,19 @@ fun BottomSection(pokemons: List<Pokemon>, onClick: (Int) -> Unit) {
         pokemons.forEach {
             ElevatedCard(
                 elevation = CardDefaults.cardElevation(6.dp),
-                shape = RoundedCornerShape(0.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF63a960)),
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor =
+                if (selectedPokemon == pokemons.indexOf(it) + 1) {
+                    Color(0xFF477f44)
+                } else {
+                    Color(0xFF63a960)
+                }),
                 modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .padding(vertical = 8.dp, horizontal = 24.dp)
                     .clickable {
-                        onClick(pokemons.indexOf(it) + 1)
+                        selectedPokemon = pokemons.indexOf(it) + 1
+                        onClick(selectedPokemon)
+
                     }
             ) {
                 Text(
