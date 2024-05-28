@@ -14,6 +14,6 @@ class PokemonService: KtorApi() {
     }.body()
 
     suspend fun getPokemonById(id: Int): PokemonDetailResponse = client.get {
-        pathUrl("api/v2/pokemon/${id}")
+        pathUrl("api/v2/pokemon-species/${id}")
     }.body()
 }

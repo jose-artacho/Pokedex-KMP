@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -32,19 +33,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import domain.model.Pokemon
+import domain.model.PokemonDetail
 import ui.PokedexScreen.Companion.IMAGE_EXTENSION
+import ui.PokedexScreen.Companion.PAGE_DESCRIPTION
+import ui.PokedexScreen.Companion.PAGE_IMAGE
 import ui.PokedexScreen.Companion.SPRITE_URL
 
 class PokedexScreen : Screen {
@@ -53,6 +58,8 @@ class PokedexScreen : Screen {
         const val SPRITE_URL =
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
         const val IMAGE_EXTENSION = ".png"
+        const val PAGE_IMAGE = 0
+        const val PAGE_DESCRIPTION = 1
     }
 
     @Composable
@@ -60,6 +67,7 @@ class PokedexScreen : Screen {
 
         val viewModel = remember { PokedexViewModel() }
         val pokemons by viewModel.pokemons.collectAsState()
+        val pokemonDetail by viewModel.pokemonDetail.collectAsState()
         var selectedPokemon by remember { mutableStateOf(1) }
 
         Column(
@@ -71,12 +79,14 @@ class PokedexScreen : Screen {
             TopSection()
             HorizontalDivider(
                 thickness = 1.dp,
-                color = Color.Black)
+                color = Color.Black
+            )
             Spacer(modifier = Modifier.height(32.dp))
-            ScreenSection(selectedPokemon)
+            ScreenSection(selectedPokemon, pokemonDetail)
             Spacer(modifier = Modifier.height(32.dp))
             BottomSection(pokemons) {
                 selectedPokemon = it
+                viewModel.getPokemonDetail(selectedPokemon)
             }
         }
 
@@ -98,7 +108,7 @@ fun TopSection() {
 }
 
 @Composable
-fun ScreenSection(selectedPokemon: Int) {
+fun ScreenSection(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,33 +117,94 @@ fun ScreenSection(selectedPokemon: Int) {
         color = Color.LightGray,
         shape = RoundedCornerShape(8.dp)
     ) {
-        val url = "$SPRITE_URL${selectedPokemon}$IMAGE_EXTENSION"
 
-        Surface(
-            modifier = Modifier.padding(32.dp),
-            color = Color.Black,
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            SubcomposeAsyncImage(
-                model = url,
-                contentDescription = null
-            ) {
-                val state = painter.state
-                if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                    CircularProgressIndicator()
-                } else {
-                    SubcomposeAsyncImageContent()
+        ScreenViewPager(selectedPokemon, pokemonDetail)
+
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val url = "$SPRITE_URL${selectedPokemon}$IMAGE_EXTENSION"
+
+    Surface(
+        modifier = Modifier.padding(32.dp).fillMaxWidth(),
+        color = Color.Black,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column {
+            HorizontalPager(
+                modifier = Modifier.height(200.dp).fillMaxSize().align(CenterHorizontally),
+                state = pagerState
+            ) { page ->
+
+                when (page) {
+                    PAGE_IMAGE -> {
+                        SubcomposeAsyncImage(
+                            model = url,
+                            contentDescription = null
+                        ) {
+                            val state = painter.state
+                            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                            } else {
+                                SubcomposeAsyncImageContent(
+                                    modifier = Modifier.fillMaxSize().size(180.dp),
+                                    alignment = Center)
+                            }
+                        }
+                    }
+
+                    PAGE_DESCRIPTION -> {
+                        Column {
+                            Text(
+                                modifier = Modifier.verticalScroll(rememberScrollState())
+                                    .fillMaxSize().padding(16.dp).weight(1.0f),
+                                text = pokemonDetail?.description ?: "",
+                                color = Color.White,
+                                textAlign = TextAlign.Start,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
                 }
             }
-            Text(
-                text = "#$selectedPokemon",
-                color = Color.White,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.padding(8.dp)
-            )
+
+            Row(
+                Modifier.fillMaxWidth().height(16.dp).padding(horizontal = 16.dp),
+                verticalAlignment = CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.weight(0.5f),
+                    text = "#$selectedPokemon",
+                    color = Color.White,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+
+                Spacer(modifier = Modifier.weight(0.5f))
+
+                repeat(pagerState.pageCount) { iteration ->
+                    val color =
+                        if (pagerState.currentPage == iteration) Color.LightGray else Color.DarkGray
+                    Box(
+                        modifier = Modifier.align(CenterVertically)
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+            }
         }
     }
 }
+
 
 @Composable
 fun BottomSection(pokemons: List<Pokemon>, onClick: (Int) -> Unit) {

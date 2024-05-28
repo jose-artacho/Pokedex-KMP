@@ -18,8 +18,12 @@ class PokedexViewModel : CoroutineViewModel(), KoinComponent {
     private val _pokemons = MutableStateFlow<List<Pokemon>>(emptyList())
     val pokemons: StateFlow<List<Pokemon>> = _pokemons
 
+    private val _pokemonDetail = MutableStateFlow<PokemonDetail?>(null)
+    val pokemonDetail: StateFlow<PokemonDetail?> = _pokemonDetail
+
     init {
         getPokemonList()
+        getPokemonDetail(1)
     }
 
     private fun getPokemonList() {
@@ -28,9 +32,9 @@ class PokedexViewModel : CoroutineViewModel(), KoinComponent {
         }
     }
 
-    fun observePokemon(onChange: (List<Pokemon>) -> Unit) {
-        pokemons.onEach {
-            onChange(it)
-        }.launchIn(coroutineScope)
+    fun getPokemonDetail(id: Int) {
+        coroutineScope.launch {
+            _pokemonDetail.value = recipeRepository.getPokemonById(id)
+        }
     }
 }
