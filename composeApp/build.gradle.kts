@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
     alias(libs.plugins.kotlinSerialization)
 }
 
@@ -46,7 +44,6 @@ kotlin {
             api(libs.koin.compose)
             implementation(libs.system.ui.controller)
             implementation(libs.accompanist.permissions)
-            implementation(libs.androidx.room.paging)
         }
         commonMain.dependencies {
             implementation(libs.voyager.navigator)
@@ -68,10 +65,6 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.compose.navigation)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
-            // Room
-            implementation(libs.androidx.paging.common)
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.sqlite.bundled)
 
             api(libs.koin.core)
             api(libs.koin.compose)
@@ -132,17 +125,4 @@ compose.desktop {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-dependencies {
-    implementation(libs.androidx.ui.tooling.preview.android)
-    // Room
-    add("kspAndroid", libs.androidx.room.compiler)
-    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-    add("kspIosX64", libs.androidx.room.compiler)
-    add("kspIosArm64", libs.androidx.room.compiler)
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }
