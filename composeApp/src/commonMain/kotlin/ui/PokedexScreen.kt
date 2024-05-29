@@ -98,7 +98,7 @@ fun TopSection() {
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp).padding(horizontal = 16.dp)
+        modifier = Modifier.fillMaxWidth().padding(top = 48.dp, bottom = 16.dp).padding(horizontal = 16.dp)
     ) {
         CircleButton(Color.Blue, 32)
         CircleButton(Color.Red)
