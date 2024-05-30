@@ -8,12 +8,12 @@ import io.ktor.client.request.parameter
 
 class PokemonService: KtorApi() {
 
-    suspend fun getPokemons(): PokemonResponse = client.get {
-        pathUrl("api/v2/pokemon")
-        parameter("limit", "151")
+    suspend fun getPokemons(limit: String): PokemonResponse = client.get {
+        pathUrl(PokemonServiceConstants.GET_POKEMONS)
+        parameter(PokemonServiceConstants.LIMIT, limit)
     }.body()
 
     suspend fun getPokemonById(id: Int): PokemonDetailResponse = client.get {
-        pathUrl("api/v2/pokemon-species/${id}")
+        pathUrl(PokemonServiceConstants.GET_POKEMON_BY_ID + id)
     }.body()
 }

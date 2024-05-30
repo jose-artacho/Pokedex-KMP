@@ -10,8 +10,8 @@ import org.koin.core.component.inject
 
 class PokemonRepositoryImpl: PokemonRepository, KoinComponent {
     private val pokemonDataSource: PokemonDataSource by inject()
-    override suspend fun getPokemons(): List<Pokemon> {
-        return pokemonDataSource.getPokemons().results.map { it.asExternalModel() }
+    override suspend fun getPokemons(limit: String): List<Pokemon> {
+        return pokemonDataSource.getPokemons(limit).results.map { it.asExternalModel() }
     }
 
     override suspend fun getPokemonById(id: Int): PokemonDetail {

@@ -10,8 +10,8 @@ class PokemonDataSource(
 
 ) {
 
-    suspend fun  getPokemons() = withContext(dispatcher.ioDispatcher) {
-        api.getPokemons()
+    suspend fun  getPokemons(limit: String) = withContext(dispatcher.ioDispatcher) {
+        api.getPokemons(limit)
     }
     suspend fun  getPokemonById(id: Int) = withContext(dispatcher.ioDispatcher) {
         api.getPokemonById(id)
