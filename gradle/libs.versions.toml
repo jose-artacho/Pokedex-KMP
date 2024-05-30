@@ -21,6 +21,11 @@ accompanist-version = "0.33.2-alpha"
 accompanist-permissions = "0.32.0"
 kotlinx-datetime = "0.5.0"
 voyager = "1.1.0-alpha04"
+coroutines-test-ver = "1.8.1"
+kotest = "5.9.0"
+turbine = "1.1.0"
+mockk = "1.8.13.kotlin13"
+securityIdentityCredential = "1.0.0-alpha03"
 
 [libraries]
 
@@ -42,6 +47,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json-ver" }
 
@@ -59,6 +65,14 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 
 coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3-io" }
 coil3-network = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3-io" }
+
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test-ver" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+mockk-io = { module = "io.mockk:mockk", version.ref = "mockk" }
+androidx-security-identity-credential = { group = "androidx.security", name = "security-identity-credential", version.ref = "securityIdentityCredential" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

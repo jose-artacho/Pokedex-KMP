@@ -1,11 +1,14 @@
 package di
 
-import data.datasource.cloud.PokemonDataSource
-import data.network.PokemonService
+import data.datasource.PokemonDataSource
+import data.datasource.cloud.PokemonDataSourceImpl
+import data.network.KtorApi
 import data.repository.PokemonRepositoryImpl
 import domain.repository.PokemonRepository
 import domain.use_cases.GetPokemonByIdUseCase
 import domain.use_cases.GetPokemonsUseCase
+import domain.use_cases.implementations.GetPokemonByIdUseCaseImpl
+import domain.use_cases.implementations.GetPokemonsUseCaseImpl
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
@@ -24,8 +27,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration) = startKoin {
 fun initKoin() = initKoin {}
 
 private val dataModule = module {
-    factory { PokemonDataSource(get(), get()) }
-    factory { PokemonService() }
+    factory { PokemonDataSourceImpl(get()) }
+    single<PokemonRepository> { PokemonRepositoryImpl() }
 
 }
 
@@ -34,12 +37,11 @@ private val utilsModule = module {
 }
 
 private val domainModule = module {
-single<PokemonRepository> { PokemonRepositoryImpl() }
-    factory { PokemonDataSource(get(), get()) }
-    factory { GetPokemonsUseCase() }
-    factory { GetPokemonByIdUseCase() }
+    factory { KtorApi() }
+    single { PokemonRepositoryImpl() }
+    single<PokemonDataSource> { PokemonDataSourceImpl(get()) }
+    single { GetPokemonsUseCaseImpl(get()) }
+    single { GetPokemonByIdUseCaseImpl(get()) }
 }
 
 private val sharedModule = listOf(domainModule, dataModule, utilsModule)
-
-fun getSharedModules() = sharedModule

@@ -1,6 +1,9 @@
 package data.repository
 
-import data.datasource.cloud.PokemonDataSource
+import data.datasource.PokemonDataSource
+import data.datasource.cloud.PokemonDataSourceImpl
+import data.datasource.entities.PokemonDetailResponse
+import data.datasource.entities.PokemonResponse
 import data.util.asExternalModel
 import domain.model.Pokemon
 import domain.model.PokemonDetail
@@ -10,11 +13,9 @@ import org.koin.core.component.inject
 
 class PokemonRepositoryImpl: PokemonRepository, KoinComponent {
     private val pokemonDataSource: PokemonDataSource by inject()
-    override suspend fun getPokemons(limit: String): List<Pokemon> {
-        return pokemonDataSource.getPokemons(limit).results.map { it.asExternalModel() }
-    }
+    override suspend fun getPokemons(limit: String): Result<PokemonResponse> =
+        pokemonDataSource.getPokemons(limit)
 
-    override suspend fun getPokemonById(id: Int): PokemonDetail {
-        return pokemonDataSource.getPokemonById(id).asExternalModel()
-    }
+    override suspend fun getPokemonById(id: Int): Result<PokemonDetailResponse> =
+        pokemonDataSource.getPokemonById(id)
 }

@@ -16,6 +16,8 @@ kotlin {
         }
     }
 
+    task("testClasses")
+
     jvm("desktop")
     
     listOf(
@@ -78,6 +80,23 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.property)
+            implementation(libs.ktor.mock)
+            implementation(libs.coroutines.test)
+            implementation(libs.turbine.turbine)
+            implementation(libs.mockk.io)
+
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+        }
     }
 }
 
@@ -109,6 +128,9 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
+}
+dependencies {
+    implementation(libs.androidx.security.identity.credential)
 }
 
 compose.desktop {

@@ -1,12 +1,9 @@
 package domain.use_cases
 
-import domain.repository.PokemonRepository
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import ui.PokedexViewModel.Companion.POKEDEX_KANTO
+import domain.ResultData
+import domain.model.Pokemon
 
-class GetPokemonsUseCase: KoinComponent {
-    private val repository: PokemonRepository by inject()
+interface GetPokemonsUseCase {
 
-    suspend fun invoke(limit: String? = null) = repository.getPokemons(limit ?: POKEDEX_KANTO)
+    suspend operator fun invoke(limit: String? = null): ResultData<List<Pokemon>>
 }

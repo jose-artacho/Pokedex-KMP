@@ -1,11 +1,9 @@
 package domain.use_cases
 
-import domain.repository.PokemonRepository
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import domain.ResultData
+import domain.model.PokemonDetail
 
-class GetPokemonByIdUseCase: KoinComponent {
-    private val repository: PokemonRepository by inject()
+interface GetPokemonByIdUseCase {
 
-    suspend fun invoke(id: Int) = repository.getPokemonById(id)
+    suspend operator fun invoke(id: Int): ResultData<PokemonDetail>
 }
