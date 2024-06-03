@@ -52,6 +52,7 @@ import ui.PokedexScreen.Companion.IMAGE_EXTENSION
 import ui.PokedexScreen.Companion.PAGE_DESCRIPTION
 import ui.PokedexScreen.Companion.PAGE_IMAGE
 import ui.PokedexScreen.Companion.SPRITE_URL
+import util.UiState
 
 class PokedexScreen : Screen {
 
@@ -75,7 +76,7 @@ class PokedexScreen : Screen {
             modifier = Modifier
                 .background(Color(0xFFc32c33))
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
         ) {
             TopSection()
             HorizontalDivider(
@@ -110,7 +111,7 @@ fun TopSection() {
 }
 
 @Composable
-fun ScreenSection(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
+fun ScreenSection(selectedPokemon: Int, pokemonDetail: UiState<PokemonDetail?>) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -119,11 +120,48 @@ fun ScreenSection(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
         color = Color.LightGray,
         shape = RoundedCornerShape(8.dp)
     ) {
+        Surface(
+            modifier = Modifier.padding(32.dp).fillMaxWidth(),
+            color = Color.Black,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            when (pokemonDetail) {
+                is UiState.Success -> {
+                    ScreenViewPager(selectedPokemon, pokemonDetail.data)
+                }
 
-        ScreenViewPager(selectedPokemon, pokemonDetail)
+                is UiState.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(24.dp),
+                        horizontalAlignment = CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = pokemonDetail.message,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                }
+
+                else -> {
+
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
     }
 }
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -131,26 +169,20 @@ fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val url = "$SPRITE_URL${selectedPokemon}$IMAGE_EXTENSION"
 
-    Surface(
-        modifier = Modifier.padding(32.dp).fillMaxWidth(),
-        color = Color.Black,
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Column {
-            HorizontalPager(
-                modifier = Modifier.height(200.dp).fillMaxSize().align(CenterHorizontally),
-                state = pagerState
-            ) { page ->
+    Column {
+        HorizontalPager(
+            modifier = Modifier.height(200.dp).fillMaxSize().align(CenterHorizontally),
+            state = pagerState
+        ) { page ->
 
-                when (page) {
-                    PAGE_IMAGE -> ImageViewPage(url)
+            when (page) {
+                PAGE_IMAGE -> ImageViewPage(url)
 
-                    PAGE_DESCRIPTION -> DescriptionViewPage(pokemonDetail)
-                }
+                PAGE_DESCRIPTION -> DescriptionViewPage(pokemonDetail)
             }
-
-            ViewPagerBottomSection(pagerState, selectedPokemon)
         }
+
+        ViewPagerBottomSection(pagerState, selectedPokemon)
     }
 }
 
