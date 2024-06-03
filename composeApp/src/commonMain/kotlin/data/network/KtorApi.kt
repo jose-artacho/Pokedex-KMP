@@ -3,6 +3,7 @@ package data.network
 import data.network.PokemonServiceConstants.BASE_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestBuilder
@@ -14,8 +15,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 
-class KtorApi {
-    val client = HttpClient {
+class KtorApi(httpClientEngine: HttpClientEngine) {
+
+    val client = HttpClient(httpClientEngine) {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true

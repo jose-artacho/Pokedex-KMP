@@ -11,9 +11,8 @@ import io.ktor.client.request.parameter
 import kotlinx.coroutines.withContext
 import util.Dispatcher
 
-class PokemonDataSourceImpl(
+internal class PokemonDataSourceImpl(
     private val api: KtorApi
-
 ) : PokemonDataSource {
 
     override suspend fun getPokemons(limit: String): Result<PokemonResponse> =

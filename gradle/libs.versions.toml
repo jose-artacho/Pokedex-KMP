@@ -2,11 +2,11 @@
 android-compileSdk = "34"
 android-minSdk = "24"
 agp = "8.2.2"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 kotlinxCoroutinesCore = "1.8.1-Beta"
 ktor = "2.3.11"
 compose = "1.6.10-beta01"
-compose-multiplatform = "1.6.10-beta02"
+compose-multiplatform = "1.6.10"
 androidx-lifecycle = "2.8.0-beta01"
 compose-navigation-ver = "2.8.0-alpha02"
 androidx-activityCompose = "1.9.0"
@@ -14,7 +14,7 @@ kotlinx-serialization-json-ver = "1.6.3"
 androidx-appcompat = "1.6.1"
 androidx-core = "1.13.1"
 androidx-datastore = "1.1.1"
-koin = "3.4.3"
+koin = "3.5.6"
 koin-compose = "1.0.4"
 coil3-io = "3.0.0-alpha06"
 accompanist-version = "0.33.2-alpha"
@@ -24,7 +24,7 @@ voyager = "1.1.0-alpha04"
 coroutines-test-ver = "1.8.1"
 kotest = "5.9.0"
 turbine = "1.1.0"
-mockk = "1.8.13.kotlin13"
+mock = "2.0.0"
 securityIdentityCredential = "1.0.0-alpha03"
 
 [libraries]
@@ -36,7 +36,7 @@ androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecy
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
-
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 ktor-darwin-ios = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -71,12 +71,13 @@ kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", versio
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-mockk-io = { module = "io.mockk:mockk", version.ref = "mockk" }
 androidx-security-identity-credential = { group = "androidx.security", name = "security-identity-credential", version.ref = "securityIdentityCredential" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+mocking = { id = "dev.mokkery", version.ref = "mock" }

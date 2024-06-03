@@ -11,8 +11,9 @@ import domain.repository.PokemonRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class PokemonRepositoryImpl: PokemonRepository, KoinComponent {
-    private val pokemonDataSource: PokemonDataSource by inject()
+internal class PokemonRepositoryImpl(
+    private val pokemonDataSource: PokemonDataSource
+): PokemonRepository {
     override suspend fun getPokemons(limit: String): Result<PokemonResponse> =
         pokemonDataSource.getPokemons(limit)
 

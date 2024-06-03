@@ -3,8 +3,10 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.mocking)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -92,7 +94,7 @@ kotlin {
             implementation(libs.ktor.mock)
             implementation(libs.coroutines.test)
             implementation(libs.turbine.turbine)
-            implementation(libs.mockk.io)
+            implementation(libs.koin.test)
 
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)

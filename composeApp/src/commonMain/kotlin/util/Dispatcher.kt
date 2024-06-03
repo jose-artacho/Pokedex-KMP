@@ -1,5 +1,6 @@
 package util
 
+import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.CoroutineDispatcher
 
 interface Dispatcher {
@@ -7,3 +8,4 @@ interface Dispatcher {
 }
 
 expect fun provideDispatcher(): Dispatcher
+expect fun getApiEngine(): HttpClientEngine

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -84,7 +85,7 @@ class PokedexScreen : Screen {
             Spacer(modifier = Modifier.height(32.dp))
             ScreenSection(selectedPokemon, pokemonDetail)
             Spacer(modifier = Modifier.height(32.dp))
-            BottomSection(pokemons) {
+            PokemonListSection(pokemons) {
                 selectedPokemon = it
                 viewModel.getPokemonDetail(selectedPokemon)
             }
@@ -98,7 +99,8 @@ fun TopSection() {
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth().padding(top = 48.dp, bottom = 16.dp).padding(horizontal = 16.dp)
+        modifier = Modifier.fillMaxWidth().padding(top = 48.dp, bottom = 16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         CircleButton(Color.Blue, 32)
         CircleButton(Color.Red)
@@ -119,7 +121,6 @@ fun ScreenSection(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
     ) {
 
         ScreenViewPager(selectedPokemon, pokemonDetail)
-
     }
 }
 
@@ -142,84 +143,95 @@ fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
             ) { page ->
 
                 when (page) {
-                    PAGE_IMAGE -> {
-                        SubcomposeAsyncImage(
-                            model = url,
-                            contentDescription = null
-                        ) {
-                            val state = painter.state
-                            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                                Column(
-                                    Modifier.fillMaxSize(),
-                                    horizontalAlignment = CenterHorizontally
-                                ) {
-                                    Spacer(modifier = Modifier.weight(1f))
+                    PAGE_IMAGE -> ImageViewPage(url)
 
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp)
-                                    )
-
-                                    Spacer(modifier = Modifier.weight(1f))
-                                }
-                            } else {
-                                SubcomposeAsyncImageContent(
-                                    modifier = Modifier.fillMaxSize().size(180.dp),
-                                    alignment = Center
-                                )
-                            }
-                        }
-                    }
-
-                    PAGE_DESCRIPTION -> {
-                        Column {
-                            Text(
-                                modifier = Modifier.verticalScroll(rememberScrollState())
-                                    .fillMaxSize().padding(16.dp).weight(1.0f),
-                                text = pokemonDetail?.description ?: "",
-                                color = Color.White,
-                                textAlign = TextAlign.Start,
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                        }
-                    }
+                    PAGE_DESCRIPTION -> DescriptionViewPage(pokemonDetail)
                 }
             }
 
-            Row(
-                Modifier.fillMaxWidth().height(16.dp).padding(horizontal = 16.dp),
-                verticalAlignment = CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.weight(0.5f),
-                    text = "#$selectedPokemon",
-                    color = Color.White,
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-
-                Spacer(modifier = Modifier.weight(0.5f))
-
-                repeat(pagerState.pageCount) { iteration ->
-                    val color =
-                        if (pagerState.currentPage == iteration) Color.LightGray else Color.DarkGray
-                    Box(
-                        modifier = Modifier.align(CenterVertically)
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .size(8.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-            }
+            ViewPagerBottomSection(pagerState, selectedPokemon)
         }
     }
 }
 
+@Composable
+fun ImageViewPage(url: String) {
+    SubcomposeAsyncImage(
+        model = url,
+        contentDescription = null
+    ) {
+        val state = painter.state
+        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+            Column(
+                Modifier.fillMaxSize(),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        } else {
+            SubcomposeAsyncImageContent(
+                modifier = Modifier.fillMaxSize().size(180.dp),
+                alignment = Center
+            )
+        }
+    }
+}
 
 @Composable
-fun BottomSection(pokemons: List<Pokemon>, onClick: (Int) -> Unit) {
+fun DescriptionViewPage(pokemonDetail: PokemonDetail?) {
+    Column {
+        Text(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+                .fillMaxSize().padding(16.dp).weight(1.0f),
+            text = pokemonDetail?.description ?: "",
+            color = Color.White,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.titleLarge,
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ViewPagerBottomSection(pagerState: PagerState, selectedPokemon: Int) {
+    Row(
+        Modifier.fillMaxWidth().height(16.dp).padding(horizontal = 16.dp),
+        verticalAlignment = CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(0.5f),
+            text = "#$selectedPokemon",
+            color = Color.White,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+
+        Spacer(modifier = Modifier.weight(0.5f))
+
+        repeat(pagerState.pageCount) { iteration ->
+            val color =
+                if (pagerState.currentPage == iteration) Color.LightGray else Color.DarkGray
+            Box(
+                modifier = Modifier.align(CenterVertically)
+                    .padding(2.dp)
+                    .clip(CircleShape)
+                    .background(color)
+                    .size(8.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun PokemonListSection(pokemons: List<Pokemon>, onClick: (Int) -> Unit) {
 
     var selectedPokemon by remember { mutableStateOf(1) }
 
@@ -233,12 +245,14 @@ fun BottomSection(pokemons: List<Pokemon>, onClick: (Int) -> Unit) {
             ElevatedCard(
                 elevation = CardDefaults.cardElevation(6.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor =
-                if (selectedPokemon == pokemons.indexOf(it) + 1) {
-                    Color(0xFF477f44)
-                } else {
-                    Color(0xFF63a960)
-                }),
+                colors = CardDefaults.cardColors(
+                    containerColor =
+                    if (selectedPokemon == pokemons.indexOf(it) + 1) {
+                        Color(0xFF477f44)
+                    } else {
+                        Color(0xFF63a960)
+                    }
+                ),
                 modifier = Modifier.fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 24.dp)
                     .clickable {

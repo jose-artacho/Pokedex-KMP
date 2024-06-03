@@ -1,5 +1,7 @@
 package data.network
 
+import io.ktor.client.engine.HttpClientEngine
+
 object PokemonServiceConstants {
 
     const val BASE_URL = "https://pokeapi.co/"
