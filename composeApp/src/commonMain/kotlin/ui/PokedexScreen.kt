@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,11 +21,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,7 +73,6 @@ class PokedexScreen : Screen {
         val viewModel = remember { PokedexViewModel() }
         val pokemons by viewModel.pokemons.collectAsState()
         val pokemonDetail by viewModel.pokemonDetail.collectAsState()
-        var selectedPokemon by remember { mutableStateOf(1) }
 
         Column(
             modifier = Modifier
@@ -84,11 +86,12 @@ class PokedexScreen : Screen {
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(32.dp))
-            ScreenSection(selectedPokemon, pokemonDetail)
+            ScreenSection(viewModel, pokemonDetail) {
+                viewModel.getPokemonList()
+            }
             Spacer(modifier = Modifier.height(32.dp))
             PokemonListSection(pokemons) {
-                selectedPokemon = it
-                viewModel.getPokemonDetail(selectedPokemon)
+                viewModel.getPokemonDetail(it)
             }
         }
 
@@ -111,7 +114,11 @@ fun TopSection() {
 }
 
 @Composable
-fun ScreenSection(selectedPokemon: Int, pokemonDetail: UiState<PokemonDetail?>) {
+fun ScreenSection(
+    viewModel: PokedexViewModel,
+    pokemonDetail: UiState<PokemonDetail?>,
+    onErrorClick: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,38 +133,14 @@ fun ScreenSection(selectedPokemon: Int, pokemonDetail: UiState<PokemonDetail?>) 
             shape = RoundedCornerShape(8.dp)
         ) {
             when (pokemonDetail) {
-                is UiState.Success -> {
-                    ScreenViewPager(selectedPokemon, pokemonDetail.data)
-                }
+                is UiState.Success ->
+                    SuccessView(viewModel.selectedPokemon.value, pokemonDetail.data)
 
-                is UiState.Error -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(24.dp),
-                        horizontalAlignment = CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = pokemonDetail.message,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                }
+                is UiState.Error ->
+                    ErrorView(pokemonDetail.message) { onErrorClick() }
 
-                else -> {
-
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            color = Color.White
-                        )
-                    }
-                }
+                else ->
+                    LoadingView()
             }
         }
     }
@@ -165,7 +148,7 @@ fun ScreenSection(selectedPokemon: Int, pokemonDetail: UiState<PokemonDetail?>) 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
+fun SuccessView(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val url = "$SPRITE_URL${selectedPokemon}$IMAGE_EXTENSION"
 
@@ -183,6 +166,54 @@ fun ScreenViewPager(selectedPokemon: Int, pokemonDetail: PokemonDetail?) {
         }
 
         ViewPagerBottomSection(pagerState, selectedPokemon)
+    }
+}
+
+@Composable
+fun ErrorView(message: String, onErrorClick: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = message,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        OutlinedButton(
+            modifier = Modifier.padding(top = 16.dp),
+            border = BorderStroke(1.dp, Color.White),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ),
+            onClick = {
+                onErrorClick()
+            },
+        ) {
+            Text(
+                "Try again",
+                color = Color.White,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingView() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(32.dp),
+            color = Color.White
+        )
     }
 }
 

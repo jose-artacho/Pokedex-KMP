@@ -24,34 +24,44 @@ class PokedexViewModel : CoroutineViewModel(), KoinComponent {
     private val _pokemonDetail = MutableStateFlow<UiState<PokemonDetail?>>(UiState.Idle)
     val pokemonDetail = _pokemonDetail.asStateFlow()
 
+    private val _selectedPokemon = MutableStateFlow(1)
+    val selectedPokemon = _selectedPokemon.asStateFlow()
+
     companion object {
         const val POKEDEX_KANTO = "151"
     }
 
     init {
-        _pokemonDetail.value = UiState.Loading
+
         getPokemonList()
     }
 
-    private fun getPokemonList() {
+    fun getPokemonList() {
+        _pokemonDetail.value = UiState.Loading
+
         coroutineScope.launch {
             getPokemonsUseCaseImpl.invoke(limit = POKEDEX_KANTO)
                 .onSuccess {
-                    getPokemonDetail(1)
+                    getPokemonDetail(selectedPokemon.value)
                     _pokemons.value = it
                 }.onFailure {
-                    _pokemonDetail.value = UiState.Error(message = "Pokemons not found, please try again")
+                    _pokemonDetail.value =
+                        UiState.Error(message = "Pokemons not found, please try again")
                 }
         }
     }
 
     fun getPokemonDetail(id: Int) {
+        _pokemonDetail.value = UiState.Loading
+
+        _selectedPokemon.value = id
         coroutineScope.launch {
             getPokemonByIdUseCaseImpl.invoke(id)
                 .onSuccess {
                     _pokemonDetail.value = UiState.Success(it)
                 }.onFailure {
-                    _pokemonDetail.value = UiState.Error(message = "Pokemon not found, please try again")
+                    _pokemonDetail.value =
+                        UiState.Error(message = "Pokemon not found, please try again")
                 }
         }
     }
