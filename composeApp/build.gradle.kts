@@ -1,4 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -9,18 +11,16 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+@OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
     task("testClasses")
-
-    jvm("desktop")
     
     listOf(
         iosX64(),
@@ -34,7 +34,6 @@ kotlin {
     }
     
     sourceSets {
-        val desktopMain by getting
 
         androidMain.dependencies {
             api(libs.androidx.activity.compose)
@@ -56,11 +55,9 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.animation)
             implementation(compose.material3)
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             api(compose.materialIconsExtended)
             implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
             implementation(libs.ktor.negotiation)
             implementation(libs.kotlinx.serialization.json)
@@ -69,6 +66,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.compose.navigation)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.sqlite.bundled)
 
             api(libs.koin.core)
             api(libs.koin.compose)
@@ -77,10 +75,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.darwin.ios)
-            implementation(libs.ktor.ios)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
+            implementation("co.touchlab:stately-common:2.0.6")
         }
 
         commonTest.dependencies {
@@ -93,7 +88,6 @@ kotlin {
             implementation(libs.kotest.property)
             implementation(libs.ktor.mock)
             implementation(libs.coroutines.test)
-            implementation(libs.turbine.turbine)
             implementation(libs.koin.test)
 
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
@@ -124,26 +118,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        compose = true
     }
     dependencies {
-        debugImplementation(libs.compose.ui.tooling)
-    }
-}
-dependencies {
-    implementation(libs.androidx.security.identity.credential)
-}
-
-compose.desktop {
-    application {
-        mainClass = "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.arttachdevs.pokedexkmp"
-            packageVersion = "1.0.0"
-        }
+        debugImplementation(compose.uiTooling)
     }
 }
 
