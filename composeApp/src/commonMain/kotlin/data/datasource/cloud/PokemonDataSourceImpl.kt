@@ -16,7 +16,7 @@ internal class PokemonDataSourceImpl(
 ) : PokemonDataSource {
 
     override suspend fun getPokemons(limit: String): Result<PokemonResponse> =
-        api.getApiCall(PokemonServiceConstants.GET_POKEMONS, mapOf(limit to PokemonServiceConstants.LIMIT))
+        api.getApiCall(PokemonServiceConstants.GET_POKEMONS, mapOf(PokemonServiceConstants.LIMIT to limit))
 
     override suspend fun getPokemonById(id: Int): Result<PokemonDetailResponse> =
         api.getApiCall(PokemonServiceConstants.GET_POKEMON_BY_ID.plus(id))
