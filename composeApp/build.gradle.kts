@@ -53,20 +53,13 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.animation)
             implementation(compose.material3)
-            implementation(compose.components.resources)
-            api(compose.materialIconsExtended)
             implementation(libs.ktor.core)
             implementation(libs.ktor.serialization)
             implementation(libs.ktor.negotiation)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.androidx.datastore.preferences)
-            implementation(libs.compose.navigation)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.sqlite.bundled)
 
             api(libs.koin.core)
             api(libs.koin.compose)
@@ -75,7 +68,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.darwin.ios)
-            implementation("co.touchlab:stately-common:2.0.6")
+            implementation(libs.touchlab.stately)
         }
 
         commonTest.dependencies {
@@ -90,7 +83,6 @@ kotlin {
             implementation(libs.coroutines.test)
             implementation(libs.koin.test)
 
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
     }
